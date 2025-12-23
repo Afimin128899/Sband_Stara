@@ -6,9 +6,9 @@ from handlers import tasks, withdraw, admin, profile
 from utils.users import add_referral, get_user
 
 # ------------------ Настройки бота ------------------
-BOT_TOKEN = "ВАШ_BOT_TOKEN"
+BOT_TOKEN = "8389664932:AAHw-vE5o52ODbQgUPcHf5CsSlhAIls_vDE"
 ADMIN_ID = 548858090
-FLYER_API_KEY = "ВАШ_FLYER_API_KEY"
+FLYER_API_KEY = "FL-JCQcno-ZEliXE-fQqxRr-rfbkQS"
 # ----------------------------------------------------
 
 bot = Bot(BOT_TOKEN)
