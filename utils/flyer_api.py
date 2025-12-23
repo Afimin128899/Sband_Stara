@@ -1,16 +1,17 @@
 import requests
-from config import FLYER_API_KEY
 
 API_URL = "https://api.flyerservice.io/v1/tasks"
 
-HEADERS = {
-    "Authorization": f"Bearer {FLYER_API_KEY}",
-    "Content-Type": "application/json"
-}
-
-def get_tasks(user_id: int):
+def get_tasks(user_id: int, api_key: str):
+    """
+    Получение доступных заданий FlyerService
+    """
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
     try:
-        r = requests.get(API_URL, headers=HEADERS, params={"user_id": user_id, "limit": 5}, timeout=10)
+        r = requests.get(API_URL, headers=headers, params={"user_id": user_id, "limit": 5}, timeout=10)
         data = r.json()
         tasks = data.get("data", [])
         result = []
