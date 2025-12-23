@@ -1,12 +1,11 @@
-# Хранилище пользователей (для простоты, в реальной версии - база)
-users = {}
+from utils.storage import users
 
-def get_user(user_id):
+
+def get_user(user_id: int):
     if user_id not in users:
         users[user_id] = {
             "stars": 0,
-            "referrals": 0,
-            "ref_earnings": 0,
-            "ref_link": f"https://t.me/Sband_Stars_Bot?start={user_id}"
+            "referrals": 0
         }
     return users[user_id]
+    
