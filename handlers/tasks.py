@@ -1,25 +1,34 @@
 from aiogram import types
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from utils.users import get_user
-from utils.subgram_api import get_sponsors
+from utils.flyer_api import get_tasks
+from keyboards.main_menu import main_menu
+
 
 async def tasks_handler(call: types.CallbackQuery):
-    user = get_user(call.from_user.id)
-    sponsors = get_sponsors(call.from_user.id)
-    if not sponsors:
-        await call.message.answer("Нет доступных заданий сейчас.")
+    tasks = get_tasks(call.from_user.id)
+
+    if not tasks:
+        await call.message.answer(
+            "❌ Заданий нет",
+            reply_markup=main_menu()
+        )
         return
 
-    keyboard = InlineKeyboardMarkup()
-    msg_text = ""
-    for s in sponsors:
-        msg_text += f"Название: {s.get('name', 'Задание')}\nОписание: {s.get('description', '')}\n💎 0.25 звезды\n\n"
-        keyboard.add(InlineKeyboardButton(s.get("button_text", "Перейти"), url=s.get("link")))
-    
-    keyboard.add(InlineKeyboardButton("✅ Я выполнил", callback_data="done_task"))
-    await call.message.answer(msg_text, reply_markup=keyboard)
+    kb = InlineKeyboardMarkup(inline_keyboard=[])
 
-async def done_task_handler(call: types.CallbackQuery):
-    user = get_user(call.from_user.id)
-    user["stars"] += 0.25
-    await call.answer("🎉 Ты получил 0.25 звезды!")
+    text = "📋 Задания:\n\n"
+    for task in tasks:
+        text += f"🔹 {task.get('title', 'Задание')}\n💰 0.25 ⭐\n\n"
+        kb.inline_keyboard.append([
+            InlineKeyboardButton(
+                "▶️ Перейти",
+                url=task.get("url")
+            )
+        ])
+
+    kb.inline_keyboard.append([
+        InlineKeyboardButton("🔙 Назад", callback_data="back_main")
+    ])
+
+    await call.message.answer(text, reply_markup=kb)
+    
