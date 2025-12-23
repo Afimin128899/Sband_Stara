@@ -1,56 +1,66 @@
-from aiogram import Bot, Dispatcher, types
-from aiogram.utils import executor
+import asyncio
+from aiogram import Bot, Dispatcher, types, F
+from aiogram.filters import CommandStart
 from keyboards.main_menu import main_menu
 from handlers import profile, tasks, referrals
 from utils.users import get_user
 
-API_TOKEN = "8389664932:AAHw-vE5o52ODbQgUPcHf5CsSlhAIls_vDE"
+API_TOKEN = "ВАШ_TELEGRAM_BOT_TOKEN"
 
 bot = Bot(token=API_TOKEN)
-dp = Dispatcher(bot)
+dp = Dispatcher()
 
 # =========================
-# Старт бота
+# /start
 # =========================
-@dp.message_handler(commands=["start"])
+@dp.message(CommandStart())
 async def start(message: types.Message):
-    user = get_user(message.from_user.id)
-    
-    # Обработка реферала
-    if message.get_args():
+    get_user(message.from_user.id)
+
+    if message.text and len(message.text.split()) > 1:
         try:
-            ref_id = int(message.get_args())
+            ref_id = int(message.text.split()[1])
             referrals.handle_referral(message.from_user.id, ref_id)
-        except ValueError:
+        except:
             pass
 
     await message.answer(
-        "Добро пожаловать! Ваше главное меню:",
+        "Добро пожаловать в ⭐ Sband_Stars!",
         reply_markup=main_menu()
     )
 
 # =========================
-# Обработка кнопок
+# Callback кнопки
 # =========================
-@dp.callback_query_handler(lambda c: True)
-async def callback_handler(call: types.CallbackQuery):
-    if call.data == "profile":
-        await profile.profile_handler(call)
-    elif call.data == "tasks":
-        await tasks.tasks_handler(call)
-    elif call.data == "done_task":
-        await tasks.done_task_handler(call)
-    elif call.data.startswith("exchange_"):
-        user = get_user(call.from_user.id)
-        stars_needed = int(call.data.split("_")[1])
-        if user["stars"] >= stars_needed:
-            user["stars"] -= stars_needed
-            await call.message.answer(f"Вы обменяли {stars_needed} звёзд!")
-        else:
-            await call.message.answer("У вас недостаточно звёзд.")
+@dp.callback_query(F.data == "profile")
+async def profile_cb(call: types.CallbackQuery):
+    await profile.profile_handler(call)
+
+@dp.callback_query(F.data == "tasks")
+async def tasks_cb(call: types.CallbackQuery):
+    await tasks.tasks_handler(call)
+
+@dp.callback_query(F.data == "done_task")
+async def done_task_cb(call: types.CallbackQuery):
+    await tasks.done_task_handler(call)
+
+@dp.callback_query(F.data.startswith("exchange_"))
+async def exchange_cb(call: types.CallbackQuery):
+    user = get_user(call.from_user.id)
+    amount = int(call.data.split("_")[1])
+
+    if user["stars"] >= amount:
+        user["stars"] -= amount
+        await call.message.answer(f"✅ Вы обменяли {amount} ⭐")
+    else:
+        await call.message.answer("❌ Недостаточно звёзд")
 
 # =========================
-# Запуск бота
+# Запуск
 # =========================
+async def main():
+    await dp.start_polling(bot)
+
 if __name__ == "__main__":
-    executor.start_polling(dp, skip_updates=True)
+    asyncio.run(main())
+    
