@@ -1,23 +1,26 @@
 import requests
+from config import FLYER_API_KEY
 
-API_KEY = "FL-JCQcno-ZEliXE-fQqxRr-rfbkQS"
-API_URL = "https://api.flyerservice.io"
+API_URL = "https://api.flyerservice.io/v1/tasks"
 
 HEADERS = {
-    "Authorization": f"Bearer {API_KEY}",
+    "Authorization": f"Bearer {FLYER_API_KEY}",
     "Content-Type": "application/json"
 }
 
-
 def get_tasks(user_id: int):
     try:
-        r = requests.get(
-            f"{API_URL}/v1/tasks",
-            headers=HEADERS,
-            params={"user_id": user_id},
-            timeout=10
-        )
-        return r.json().get("tasks", [])
-    except:
+        r = requests.get(API_URL, headers=HEADERS, params={"user_id": user_id, "limit": 5}, timeout=10)
+        data = r.json()
+        tasks = data.get("data", [])
+        result = []
+        for t in tasks:
+            result.append({
+                "title": t.get("title", "Задание"),
+                "url": t.get("url", "#")
+            })
+        return result
+    except Exception as e:
+        print(f"[ERROR] Flyer API: {e}")
         return []
-      
+        
