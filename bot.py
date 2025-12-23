@@ -5,7 +5,7 @@ from keyboards.main_menu import main_menu
 from handlers import profile, tasks, referrals
 from utils.users import get_user
 
-API_TOKEN = "ВАШ_TELEGRAM_BOT_TOKEN"
+API_TOKEN = "8389664932:AAHw-vE5o52ODbQgUPcHf5CsSlhAIls_vDE"
 
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher()
