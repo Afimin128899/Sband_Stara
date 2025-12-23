@@ -3,8 +3,8 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from utils.flyer_api import get_tasks
 from keyboards.main_menu import main_menu
 
-async def tasks_handler(call: types.CallbackQuery):
-    tasks = get_tasks(call.from_user.id)
+async def tasks_handler(call: types.CallbackQuery, api_key: str):
+    tasks = get_tasks(call.from_user.id, api_key)
 
     if not tasks:
         await call.message.answer("❌ Заданий нет", reply_markup=main_menu())
