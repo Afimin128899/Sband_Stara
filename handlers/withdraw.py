@@ -7,14 +7,9 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from config import ADMIN_ID
 import uuid
 
-
 async def withdraw_menu_handler(call: types.CallbackQuery):
     user = get_user(call.from_user.id)
-    await call.message.answer(
-        f"💸 Вывод\n⭐ Баланс: {user['stars']}",
-        reply_markup=withdraw_menu()
-    )
-
+    await call.message.answer(f"💸 Вывод\n⭐ Баланс: {user['stars']}", reply_markup=withdraw_menu())
 
 async def withdraw_request(call: types.CallbackQuery, amount: int, bot):
     user = get_user(call.from_user.id)
@@ -32,20 +27,12 @@ async def withdraw_request(call: types.CallbackQuery, amount: int, bot):
         "status": "pending"
     }
 
-    admin_kb = InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(
-                    "✅ Выполнено",
-                    callback_data=f"withdraw_ok:{wid}"
-                ),
-                InlineKeyboardButton(
-                    "❌ Отклонить",
-                    callback_data=f"withdraw_decline:{wid}"
-                ),
-            ]
+    admin_kb = InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text="✅ Выполнено", callback_data=f"withdraw_ok:{wid}"),
+            InlineKeyboardButton(text="❌ Отклонить", callback_data=f"withdraw_decline:{wid}")
         ]
-    )
+    ])
 
     await bot.send_message(
         ADMIN_ID,
@@ -53,8 +40,5 @@ async def withdraw_request(call: types.CallbackQuery, amount: int, bot):
         reply_markup=admin_kb
     )
 
-    await call.message.answer(
-        "⏳ Запрос отправлен",
-        reply_markup=main_menu()
-    )
-  
+    await call.message.answer("⏳ Запрос отправлен", reply_markup=main_menu())
+    
