@@ -1,17 +1,12 @@
-from utils.storage import users
+users = {}
 
-def get_user(user_id: int):
+def get_user(user_id):
     if user_id not in users:
-        users[user_id] = {
-            "stars": 0,          # баланс
-            "referrals": 0,      # количество приглашённых
-            "withdrawn": 0       # сколько всего выведено
-        }
+        users[user_id] = {"stars": 0, "refs": 0}
     return users[user_id]
 
-def add_referral(user_id: int):
-    """Добавить 1 приглашённого и +2 звезды"""
-    user = get_user(user_id)
-    user["referrals"] += 1
-    user["stars"] += 2
+def add_referral(ref_id):
+    get_user(ref_id)
+    users[ref_id]["refs"] += 1
+    users[ref_id]["stars"] += 2
     
