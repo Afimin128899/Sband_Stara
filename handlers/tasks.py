@@ -13,11 +13,15 @@ async def tasks_handler(call: types.CallbackQuery, api_key: str):
     kb = InlineKeyboardMarkup(inline_keyboard=[])
     text = "📋 Доступные задания:\n\n"
 
-    for task in tasks:
-        text += f"🔹 {task['title']}\n💰 0.25 ⭐\n\n"
-        kb.inline_keyboard.append([InlineKeyboardButton(text="▶️ Перейти", url=task['url'])])
+    for t in tasks:
+        text += f"🔹 {t.get('title','Задание')}\n💰 0.25 ⭐\n\n"
+        kb.inline_keyboard.append([
+            InlineKeyboardButton(text="▶️ Перейти", url=t.get("url", "#"))
+        ])
 
-    kb.inline_keyboard.append([InlineKeyboardButton(text="🔙 Назад", callback_data="back_main")])
+    kb.inline_keyboard.append([
+        InlineKeyboardButton(text="🔙 Назад", callback_data="back_main")
+    ])
 
     await call.message.answer(text, reply_markup=kb)
     
