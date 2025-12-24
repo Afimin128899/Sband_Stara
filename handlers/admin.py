@@ -1,39 +1,41 @@
 from aiogram import types
-from utils.users import get_user
-from utils.storage import withdraws
-from config import ADMIN_ID
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-async def admin_give_stars(message: types.Message):
-    if message.from_user.id != ADMIN_ID:
+
+async def admin_give_stars(message: types.Message, admin_id: int):
+    """
+    Команда администратора:
+    /give USER_ID AMOUNT ПРИЧИНА
+    """
+    if message.from_user.id != admin_id:
         return
 
-    try:
-        _, uid, amount, *reason = message.text.split()
-        uid = int(uid)
-        amount = float(amount)
-        reason = " ".join(reason)
-    except:
-        await message.answer("❌ Формат: /give user_id amount причина")
+    parts = message.text.split(maxsplit=3)
+    if len(parts) < 3:
+        await message.answer("❌ Использование: /give USER_ID AMOUNT [причина]")
         return
 
-    user = get_user(uid)
-    user["stars"] += amount
+    user_id = int(parts[1])
+    amount = int(parts[2])
+    reason = parts[3] if len(parts) > 3 else "Без причины"
 
-    await message.answer(f"✅ Выдано {amount} ⭐\n👤 {uid}\n📝 {reason}")
+    # Тут ты позже подключишь БД и начисление
+    await message.answer(
+        f"✅ Выдано {amount} ⭐ пользователю {user_id}\n"
+        f"📄 Причина: {reason}"
+    )
+
 
 async def withdraw_ok(call: types.CallbackQuery):
-    if call.from_user.id != ADMIN_ID:
-        return
-    wid = call.data.split(":")[1]
-    withdraws[wid]["status"] = "done"
-    user = get_user(withdraws[wid]["user_id"])
-    user["withdrawn"] += withdraws[wid]["amount"]
-    await call.message.answer("✅ Вывод выполнен")
+    """
+    Подтверждение вывода
+    """
+    await call.message.edit_text("✅ Вывод выполнен")
+
 
 async def withdraw_decline(call: types.CallbackQuery):
-    if call.from_user.id != ADMIN_ID:
-        return
-    wid = call.data.split(":")[1]
-    withdraws[wid]["status"] = "declined"
-    await call.message.answer("❌ Вывод отклонён. Отправьте причину ответом на это сообщение")
+    """
+    Отклонение вывода
+    """
+    await call.message.edit_text("❌ Вывод отклонён")
     
