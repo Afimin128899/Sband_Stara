@@ -20,9 +20,9 @@ from flyerapi import Flyer
 # ----------------- ENV -----------------
 load_dotenv()
 
-BOT_TOKEN = os.getenv("BOT_TOKEN", "").strip()
-FLYER_KEY = os.getenv("FLYER_KEY", "").strip()
-APP_URL = (os.getenv("APP_URL", "").strip()).rstrip("/")  # например: https://t.me/YourBotUsername
+BOT_TOKEN = os.getenv("8500994183:AAFuJAtatem_2olCueCceAPi9QxMOL08_EE", "").strip()
+FLYER_KEY = os.getenv("FL-eliuMo-kzwWnO-uvimwU-UOfqjW", "").strip()
+APP_URL = (os.getenv("https://t.me/Sband_Stars_Check_Bot", "").strip()).rstrip("/")  # например: https://t.me/YourBotUsername
 
 if not BOT_TOKEN:
     raise RuntimeError("BOT_TOKEN is empty. Put it into .env")
@@ -34,7 +34,7 @@ if not APP_URL:
 # ----------------- SETTINGS -----------------
 DB_PATH = "db.sqlite3"
 REF_RE = re.compile(r"^ref_(\d+)$")
-TASKS_LIMIT = 5
+TASKS_LIMIT = 10
 TASK_REWARD_STARS = 1  # сколько ⭐ даём за выполненное задание Flyer
 
 # ----------------- DB -----------------
@@ -330,4 +330,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-                    
